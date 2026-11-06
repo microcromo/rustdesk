@@ -2505,8 +2505,26 @@ pub type RustDeskInterval = ThrottledInterval;
 pub fn rustdesk_interval(i: Interval) -> ThrottledInterval {
     ThrottledInterval::new(i)
 }
-
+fn apply_microcromo_settings() {
+    *config::APP_NAME.write().unwrap() = "MicroCromo Access".to_owned();
+    {
+        let mut overwrite = config::OVERWRITE_SETTINGS.write().unwrap();
+        overwrite.insert(
+            "custom-rendezvous-server".to_owned(),
+            "rd.microcromo.com.ar".to_owned(),
+        );
+        overwrite.insert(
+            "key".to_owned(),
+            "8AK1MoMtZyv3b48nAU03wMFBVQvVcU3aSfnF7XhTJco=".to_owned(),
+        );
+    }
+    config::DEFAULT_SETTINGS.write().unwrap().insert(
+        "allow-remote-config-modification".to_owned(),
+        "Y".to_owned(),
+    );
+}
 pub fn load_custom_client() {
+    apply_microcromo_settings();
     #[cfg(debug_assertions)]
     if let Ok(data) = std::fs::read_to_string("./custom.txt") {
         read_custom_client(data.trim());
